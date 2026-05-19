@@ -33,6 +33,7 @@ struct animation {
         void             *var;
         float (*animpath)(float p);
         void  (*callback)(struct animation *anim);
+        void  (*teardown)(struct animation *anim);
 };
 
 
@@ -51,6 +52,7 @@ void luna_anim_set_var(struct animation *anim, void *var);
 void luna_anim_set_values(struct animation *anim, int32_t from, int32_t to);
 void luna_anim_set_duration(struct animation *anim, int32_t duration);
 void luna_anim_set_path(struct animation *anim, float (*animpath)(float p));
-void luna_anim_set_exec_cb(struct animation *anim, void  (*callback)(struct animation *anim));
+void luna_anim_set_callback(struct animation *anim, void (*callback)(struct animation *anim));
+void luna_anim_set_teardown(struct animation *anim, void (*teardown)(struct animation *anim));
 
 #endif

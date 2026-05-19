@@ -54,6 +54,9 @@ static void anim_timer_callback(struct animation *anim)
         }
 
         if (elapsed >= anim->duration) {
+                if(anim->teardown) {
+                        anim->teardown(anim);
+                }
                 free(anim);
                 return;
         }
@@ -134,7 +137,12 @@ void luna_anim_set_path(struct animation *anim, float (*animpath)(float p))
         anim->animpath = animpath;
 }
 
-void luna_anim_set_exec_cb(struct animation *anim, void  (*callback)(struct animation *anim))
+void luna_anim_set_callback(struct animation *anim, void (*callback)(struct animation *anim))
 {
         anim->callback = callback;
+}
+
+void luna_anim_set_teardown(struct animation *anim, void (*teardown)(struct animation *anim))
+{
+        anim->teardown = teardown;
 }
