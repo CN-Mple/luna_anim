@@ -53,6 +53,7 @@ static void anim_timer_callback(struct animation *anim)
         }
 
         if (elapsed >= anim->duration) {
+                free(anim);
                 return;
         }
 
