@@ -47,7 +47,6 @@ void luna_anim_destroy(struct animation *anim);
 void luna_anim_start(struct animation *anim);
 void luna_anim_stop(struct animation *anim);
 
-
 void luna_anim_set_var(struct animation *anim, void *var);
 void luna_anim_set_values(struct animation *anim, int32_t from, int32_t to);
 void luna_anim_set_duration(struct animation *anim, int32_t duration);

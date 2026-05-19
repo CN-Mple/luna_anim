@@ -13,7 +13,6 @@ static void anim_timer_callback(struct animation *anim);
 static void _core_callback(struct core_timer *timer)
 {
         struct animation *anim = (struct animation *)timer;
-        anim->onqueue = 0;
         anim_timer_callback(anim);
 }
 
@@ -22,6 +21,7 @@ static void anim_timer_callback(struct animation *anim)
         if (!anim->onqueue) {
 		return;
 	}
+        anim->onqueue = 0;
 
         LUNA_TICK_TYPE now     = LUNA_GET_TICK();
         LUNA_TICK_TYPE elapsed = now - anim->start_tick;
@@ -32,6 +32,7 @@ static void anim_timer_callback(struct animation *anim)
                 anim->timer.when = LUNA_GET_TICK() + ANIMATION_TICK_MS;
                 anim->timer.callback = _core_callback;
                 luna_timer_append(head, &(anim->timer));
+                anim->onqueue        = true;
                 return;
         }
         elapsed -= anim->delay;
@@ -60,6 +61,7 @@ static void anim_timer_callback(struct animation *anim)
         anim->timer.when     = LUNA_GET_TICK() + ANIMATION_TICK_MS;
         anim->timer.callback = _core_callback;
         luna_timer_append(head, &(anim->timer));
+        anim->onqueue        = true;
 }
 
 void luna_anim_ctor(struct animation *anim)
