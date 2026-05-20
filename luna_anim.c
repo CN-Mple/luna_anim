@@ -38,8 +38,8 @@ static void anim_timer_callback(struct animation *anim)
         elapsed -= anim->delay;
         float progress = (float)((float)elapsed / (float)(anim->duration));
         float curved;
-        if (anim->animpath) {
-                curved = anim->animpath(progress);
+        if (anim->path) {
+                curved = anim->path(progress);
         } else {
                 curved = anim_path_linear(progress);
         }
@@ -47,15 +47,14 @@ static void anim_timer_callback(struct animation *anim)
         if (anim->reverse) {
                 curved = 1 - curved;
         }
-
-        anim->curved = curved;
+        int16_t value = anim->from + curved * (anim->to - anim->from);
         if(anim->callback) {
-                anim->callback(anim);
+                anim->callback(anim->var, value);
         }
 
         if (elapsed >= anim->duration) {
                 if(anim->teardown) {
-                        anim->teardown(anim);
+                        anim->teardown(anim->var, value);
                 }
                 free(anim);
                 return;
@@ -69,7 +68,6 @@ static void anim_timer_callback(struct animation *anim)
 
 void luna_anim_ctor(struct animation *anim)
 {
-        anim->curve   = ANIM_CURVE_LINEAR;
         anim->reverse = false;
         anim->onqueue = false;
 }
@@ -121,7 +119,7 @@ void luna_anim_set_var(struct animation *anim, void *var)
         anim->var = var;
 }
 
-void luna_anim_set_values(struct animation *anim, int32_t from, int32_t to)
+void luna_anim_set_values(struct animation *anim, ValueType from, ValueType to)
 {
         anim->from = from;
         anim->to   = to;
@@ -132,17 +130,27 @@ void luna_anim_set_duration(struct animation *anim, int32_t duration)
         anim->duration = duration;
 }
 
-void luna_anim_set_path(struct animation *anim, float (*animpath)(float p))
+void luna_anim_set_delay(struct animation *anim, int32_t delay)
 {
-        anim->animpath = animpath;
+        anim->delay = delay;
 }
 
-void luna_anim_set_callback(struct animation *anim, void (*callback)(struct animation *anim))
+void luna_anim_set_reverse(struct animation *anim, bool reverse)
+{
+        anim->reverse = reverse;
+}
+
+void luna_anim_set_path (struct animation *anim, luna_path_cb_t   path)
+{
+        anim->path = path;
+}
+
+void luna_anim_set_callback(struct animation *anim, luna_anim_cb_t   callback)
 {
         anim->callback = callback;
 }
 
-void luna_anim_set_teardown(struct animation *anim, void (*teardown)(struct animation *anim))
+void luna_anim_set_teardown(struct animation *anim, luna_finish_cb_t teardown)
 {
         anim->teardown = teardown;
 }
