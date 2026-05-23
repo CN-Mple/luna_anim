@@ -80,6 +80,7 @@ void luna_anim_dtor(struct animation *anim)
 struct animation *luna_anim_create(void)
 {
         struct animation *anim = malloc(sizeof(struct animation));
+        memset(anim, 0, sizeof(struct animation));
         if (!anim) {
                 return NULL;
         }
